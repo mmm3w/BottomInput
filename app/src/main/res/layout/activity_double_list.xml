@@ -13,6 +13,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/message_input"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:overScrollMode="never" />
 
 </LinearLayout>

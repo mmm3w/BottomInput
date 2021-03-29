@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class InputAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var extend: String? = null
+    var extend: String? = null
         set(value) {
             if (field != value) {
                 if (value != null && field == null) {
@@ -41,16 +41,24 @@ class InputAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             0 -> InputViewHolder(parent).apply {
-                inputView?.setOnEditorActionListener { v, actionId, event ->
-                    if (actionId == EditorInfo.IME_ACTION_SEND) {
-                        onSend?.invoke(v.text.toString())
-                        true
-                    } else {
-                        false
+                inputView?.apply {
+                    setOnFocusChangeListener { _, hasFocus ->
+                        if (hasFocus) extend = null
+                    }
+                    setOnEditorActionListener { v, actionId, _ ->
+                        if (actionId == EditorInfo.IME_ACTION_SEND) {
+                            onSend?.invoke(v.text.toString())
+                            v.text = ""
+                            true
+                        } else {
+                            false
+                        }
                     }
                 }
+
                 extendView?.setOnClickListener {
-                    extend = if (extend == null) "各种扩展菜单" else null
+                    clearEditInputStatus()
+                    it.postDelayed({ extend = if (extend == null) "各种扩展菜单" else null }, 200)
                 }
             }
             else -> ExtendViewHolder(parent)
@@ -67,6 +75,13 @@ class InputAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         ) {
         val inputView: EditText? = itemView.findViewById<EditText>(R.id.input_edit)
         val extendView: ImageView? = itemView.findViewById<ImageView>(R.id.input_extend)
+
+        fun clearEditInputStatus() {
+            inputView?.apply {
+                hideSoftKeyboard()
+                clearFocus()
+            }
+        }
     }
 
     class ExtendViewHolder(parent: ViewGroup) :
