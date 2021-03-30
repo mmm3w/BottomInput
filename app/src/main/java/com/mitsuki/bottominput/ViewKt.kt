@@ -1,7 +1,9 @@
 package com.mitsuki.bottominput
 
 import android.content.Context
+import android.util.DisplayMetrics
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -32,3 +34,9 @@ fun RecyclerView.addOnScrollListenerBy(
         }
     })
 }
+
+val Context.screenWidth: Int
+    get() = (getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.let {
+        DisplayMetrics().apply { it.defaultDisplay.getMetrics(this) }.widthPixels
+    } ?: 0
+

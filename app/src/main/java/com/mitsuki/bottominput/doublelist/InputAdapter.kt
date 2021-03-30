@@ -1,4 +1,4 @@
-package com.mitsuki.bottominput
+package com.mitsuki.bottominput.doublelist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,6 +6,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.mitsuki.bottominput.R
+import com.mitsuki.bottominput.hideSoftKeyboard
 
 class InputAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

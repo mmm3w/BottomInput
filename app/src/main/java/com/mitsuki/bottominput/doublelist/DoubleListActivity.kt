@@ -1,9 +1,11 @@
-package com.mitsuki.bottominput
+package com.mitsuki.bottominput.doublelist
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mitsuki.bottominput.R
+import com.mitsuki.bottominput.addOnScrollListenerBy
 
 class DoubleListActivity : AppCompatActivity() {
 
@@ -21,10 +23,12 @@ class DoubleListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_double_list)
 
+        title = "DoubleList"
+
         mMessageView = findViewById<RecyclerView>(R.id.message_pool)?.apply {
             layoutManager = LinearLayoutManager(this@DoubleListActivity)
             adapter = mMainAdapter
-            addOnScrollListenerBy(onScrollStateChanged = { view: RecyclerView, newState: Int ->
+            addOnScrollListenerBy(onScrollStateChanged = { _: RecyclerView, newState: Int ->
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                     (mMessageInput?.findViewHolderForAdapterPosition(0) as? InputAdapter.InputViewHolder)?.apply {
                         clearEditInputStatus()

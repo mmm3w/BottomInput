@@ -9,6 +9,8 @@ class AdjustPanActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_input_mode)
 
+        title = "AdjustPan"
+
         findViewById<TextView>(R.id.main_text)?.text = "AdjustPan"
     }
 }

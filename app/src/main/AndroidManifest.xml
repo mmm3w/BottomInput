@@ -27,8 +27,10 @@
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".DoubleListActivity"
+            android:name=".doublelist.DoubleListActivity"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity android:name=".fulldialog.FullScreenDialogActivity" />
 
     </application>
 

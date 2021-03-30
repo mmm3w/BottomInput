@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/input_outside"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/input_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ebebeb"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp"
+            tools:ignore="UselessParent">
+
+            <EditText
+                android:id="@+id/input_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/shape_input"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp" />
+
+            <ImageView
+                android:id="@+id/input_extend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_round_add_circle_outline_24" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/extend_content"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_gravity="center"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="emoji or other"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -9,6 +9,8 @@ class AdjustResizeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_input_mode)
 
+        title = "AdjustResize"
+
         findViewById<TextView>(R.id.main_text)?.text = "AdjustResize"
     }
 }

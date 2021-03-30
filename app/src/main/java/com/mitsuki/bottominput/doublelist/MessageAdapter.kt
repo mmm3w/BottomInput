@@ -1,9 +1,10 @@
-package com.mitsuki.bottominput
+package com.mitsuki.bottominput.doublelist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.mitsuki.bottominput.R
 
 class MessageAdapter(private val mData: List<String>) :
     RecyclerView.Adapter<MessageAdapter.ViewHolder>() {

@@ -28,11 +28,22 @@
 
     <Button
         android:id="@+id/btn_dl"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:text="DoubleList"
+        app:layout_constraintEnd_toStartOf="@id/btn_fsd"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_adr" />
+
+    <Button
+        android:id="@+id/btn_fsd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:text="FullScreenDialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btn_dl"
         app:layout_constraintTop_toBottomOf="@id/btn_adr" />
 
 
