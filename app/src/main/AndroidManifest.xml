@@ -32,6 +32,8 @@
 
         <activity android:name=".fulldialog.FullScreenDialogActivity" />
 
+        <activity android:name=".custom.BottomInputActivity" />
+
     </application>
 
 </manifest>

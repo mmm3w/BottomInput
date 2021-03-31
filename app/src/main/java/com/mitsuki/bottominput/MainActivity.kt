@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import com.mitsuki.bottominput.custom.BottomInputActivity
 import com.mitsuki.bottominput.doublelist.DoubleListActivity
 import com.mitsuki.bottominput.fulldialog.FullScreenDialogActivity
 
@@ -26,6 +27,10 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.btn_fsd)?.setOnClickListener {
             startActivity(Intent(this, FullScreenDialogActivity::class.java))
+        }
+
+        findViewById<Button>(R.id.btn_bi)?.setOnClickListener {
+            startActivity(Intent(this, BottomInputActivity::class.java))
         }
 
 

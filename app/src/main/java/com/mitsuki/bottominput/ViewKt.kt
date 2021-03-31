@@ -1,10 +1,14 @@
 package com.mitsuki.bottominput
 
 import android.content.Context
+import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -39,4 +43,3 @@ val Context.screenWidth: Int
     get() = (getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.let {
         DisplayMetrics().apply { it.defaultDisplay.getMetrics(this) }.widthPixels
     } ?: 0
-

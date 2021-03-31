@@ -46,5 +46,14 @@
         app:layout_constraintStart_toEndOf="@id/btn_dl"
         app:layout_constraintTop_toBottomOf="@id/btn_adr" />
 
+    <Button
+        android:id="@+id/btn_bi"
+        android:layout_width="wrap_content"
+        android:text="BottomInput"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_dl" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
