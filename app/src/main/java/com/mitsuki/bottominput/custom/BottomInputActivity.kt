@@ -55,6 +55,8 @@ class BottomInputActivity : AppCompatActivity() {
 
     private var mLastDiff = 0
 
+    private lateinit var measure:InputMeasurePopupWindow
+
 
     /**
      * Extended menu
@@ -103,41 +105,10 @@ class BottomInputActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_input)
-        mInputLayout = findViewById<LinearLayout>(R.id.input_layout)?.apply {
-            addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-                Log.e(
-                    "asdf",
-                    "left:$left, top:$top, right:$right, bottom:$bottom, oldLeft:$oldLeft, oldTop:$oldTop, oldRight:$oldRight, oldBottom:$oldBottom"
-                )
-//
-//                Rect().also { rect ->
-//                    window?.decorView?.apply {
-//                        getWindowVisibleDisplayFrame(rect)
-//                        val heightDifference = rootView.height - rect.bottom
-//                        Log.e("asdf", "input:$heightDifference")
-//                        if (heightDifference <= 0 && mLastDiff > 0) {
-//                            supportFragmentManager.commit {
-//                                setReorderingAllowed(true)
-//                                replace(
-//                                    R.id.input_extend_container,
-//                                    MenuFragment::class.java,
-//                                    null,
-//                                    "extend"
-//                                )
-//                            }
-//                        } else {
-//                            findViewById<View>(R.id.input_extend_container)?.apply {
-//                                layoutParams = layoutParams.apply {
-//                                    height = heightDifference
-//                                }
-//                            }
-//                        }
-//                        mLastDiff = heightDifference
-//                    }
-//                }
 
-            }
-        }
+        window.decorView.systemUiVisibility =  View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+
+        measure = InputMeasurePopupWindow(this)
 
         mInputView = findViewById<EditText>(R.id.input_edit)?.apply {
 
@@ -145,6 +116,7 @@ class BottomInputActivity : AppCompatActivity() {
 
         mEmojiView = findViewById<View>(R.id.input_emoji)?.apply {
             setOnClickListener {
+                mInputView?.hideSoftKeyboard()
                 mMenu = Menu.Emoji
             }
         }
@@ -153,6 +125,11 @@ class BottomInputActivity : AppCompatActivity() {
             setOnClickListener {
                 mInputView?.hideSoftKeyboard()
                 mMenu = Menu.Normal
+                findViewById<View>(R.id.input_extend_container)?.apply {
+                    layoutParams = layoutParams.apply {
+                        height = 929
+                    }
+                }
             }
         }
     }

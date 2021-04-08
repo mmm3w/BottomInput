@@ -25,8 +25,7 @@
             android:background="@drawable/shape_input_2"
             android:imeOptions="actionSend"
             android:inputType="text"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="4dp" />
+            android:paddingHorizontal="10dp" />
 
         <ImageView
             android:id="@+id/input_emoji"

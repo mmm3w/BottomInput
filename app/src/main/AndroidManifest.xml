@@ -32,7 +32,8 @@
 
         <activity android:name=".fulldialog.FullScreenDialogActivity" />
 
-        <activity android:name=".custom.BottomInputActivity" />
+        <activity android:name=".custom.BottomInputActivity"
+            android:windowSoftInputMode="adjustNothing"/>
 
     </application>
 

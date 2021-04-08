@@ -43,3 +43,8 @@ val Context.screenWidth: Int
     get() = (getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.let {
         DisplayMetrics().apply { it.defaultDisplay.getMetrics(this) }.widthPixels
     } ?: 0
+
+val Context.screenHeight: Int
+    get() = (getSystemService(Context.WINDOW_SERVICE) as? WindowManager)?.let {
+        DisplayMetrics().apply { it.defaultDisplay.getMetrics(this) }.heightPixels
+    } ?: 0
