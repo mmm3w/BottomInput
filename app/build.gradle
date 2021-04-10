@@ -44,4 +44,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation "androidx.fragment:fragment-ktx:1.3.2"
+    implementation 'com.github.MitsukiNIBAN:Armory:0.2.1'
+
 }

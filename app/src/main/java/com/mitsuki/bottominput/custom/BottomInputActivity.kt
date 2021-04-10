@@ -55,7 +55,7 @@ class BottomInputActivity : AppCompatActivity() {
 
     private var mLastDiff = 0
 
-    private lateinit var measure:InputMeasurePopupWindow
+    private lateinit var measure: InputMeasurePopupWindow
 
 
     /**
@@ -106,32 +106,47 @@ class BottomInputActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_input)
 
-        window.decorView.systemUiVisibility =  View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
 
         measure = InputMeasurePopupWindow(this)
+
+        findViewById<View>(R.id.input_extend_container)?.apply {
+            layoutParams = layoutParams.apply {
+                height = 526
+            }
+        }
 
         mInputView = findViewById<EditText>(R.id.input_edit)?.apply {
 
         }
 
-        mEmojiView = findViewById<View>(R.id.input_emoji)?.apply {
-            setOnClickListener {
-                mInputView?.hideSoftKeyboard()
-                mMenu = Menu.Emoji
-            }
-        }
-
+//        mEmojiView = findViewById<View>(R.id.input_emoji)?.apply {
+//            setOnClickListener {
+//                mInputView?.hideSoftKeyboard()
+//                mMenu = Menu.Emoji
+//            }
+//        }
+//
         mExtendView = findViewById<View>(R.id.input_extend)?.apply {
             setOnClickListener {
                 mInputView?.hideSoftKeyboard()
-                mMenu = Menu.Normal
-                findViewById<View>(R.id.input_extend_container)?.apply {
-                    layoutParams = layoutParams.apply {
-                        height = 929
-                    }
-                }
+//                mMenu = Menu.Normal
             }
         }
+
+        findViewById<View>(R.id.input_hn)?.setOnClickListener {
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        }
+
+
+        findViewById<View>(R.id.input_hnl)?.setOnClickListener {
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+        }
+
+        findViewById<View>(R.id.input_default)?.setOnClickListener {
+            window.decorView.systemUiVisibility = 0
+        }
+
     }
 
 

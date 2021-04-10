@@ -210,7 +210,7 @@
 //            int h = this.pUIViewSurfaceMaster.getHeight();
 //            double min = (double)Math.min(w, h);
 //            double max = (double)Math.max(w, h);
-//            // max / min < 1.20 On such aspect-ratio. Could be a square resolution.
+//                // max / min < 1.20 On such aspect-ratio. Could be a square resolution.
 //            if (max / min >= 1.20)
 //            {
 //                int ro = pActivity.getRequestedOrientation();
@@ -245,11 +245,11 @@
 //            //需要减掉的导航栏高度
 //            int hBottomIH = mmUIDisplayMetrics.GetBottomInvalidHeight(pActivity, this.pUIViewListener, this.hNavigationBarHeight);
 //            //屏幕高度减去导航栏高度后的高度
-//            int hBottomVH = this.hOriginalRect.bottom - hBottomIH;
+//            int hBottomVH = this.hOriginalRect.bottom - hBottomIH;  //h
 //            //当前显示区域高度减去了上面的高度
-//            int hRnHeight = this.hCompressRectNew.bottom - hBottomVH;
+//            int hRnHeight = this.hCompressRectNew.bottom - hBottomVH;  //hh
 //            //当前显示区域高度和上次显示区域的高度差
-//            int hCompress = this.hCompressRectNew.bottom - this.hCompressRectOld.bottom;
+//            int hCompress = this.hCompressRectNew.bottom - this.hCompressRectOld.bottom;  //hhh
 //
 //            //屏幕高度减去导航栏高度后的高度 同 hBottomVH
 //            int hHideLine = this.hOriginalRect.bottom - hBottomIH;
@@ -275,16 +275,25 @@
 //                break;
 //            }
 //
+//            //原始屏幕高度
 //            int hOrHeight = this.hOriginalRect.bottom;
+//            //当前显示区域高度 减去屏幕高度
 //            int hSrHeight = this.hCompressRectNew.bottom - this.hOriginalRect.bottom;
+//            //屏幕高度减去上次的显示高度
 //            int hHrHeight = this.hOriginalRect.bottom - this.hCompressRectOld.bottom;
+//            //这里算是计算出了一个键盘高度
 //            int hDtHeight = (0 <= hRnHeight) ? hHrHeight : hSrHeight;
 //
 //            // Note: The abs(hDtHeight) always keyboard height.
 //            //       Height adjustment occurs when the input mode is switched.
+//            //这个又是一个什么高度
 //            double hKeypadRectY = (double)((0 <= hRnHeight) ? hOrHeight : hCurrLine);
+//            //使用绝对值
 //            double hKeypadRectH = (double)Math.abs(hDtHeight);
 //
+//            //下面差不多就是获取软键盘高度之后的行为了
+//
+//            //计算动画时长
 //            double hVelocity = (max / 2.0) / 0.2;
 //            double hAnimationDuration = Math.abs(hCompress) / hVelocity;
 //            int hState = 0;
@@ -295,6 +304,7 @@
 //            int hViewPixelW = this.pUIViewSurfaceMaster.getWidth();
 //            int hViewPixelH = this.pUIViewSurfaceMaster.getHeight();
 //
+//            //软键盘状态
 //            if(0 <= hRnHeight)
 //            {
 //                // keypad is fully retracted.

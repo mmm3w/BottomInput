@@ -4,10 +4,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingTop="48dp">
+
+        <Button
+            android:id="@+id/input_hn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="fs" />
+
+        <Button
+            android:id="@+id/input_hnl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="fsl" />
+
+        <Button
+            android:id="@+id/input_default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="default" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/input_layout"
