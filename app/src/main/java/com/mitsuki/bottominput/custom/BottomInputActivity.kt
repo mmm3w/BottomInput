@@ -7,7 +7,9 @@ import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.commit
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.mitsuki.bottominput.R
 import com.mitsuki.bottominput.hideSoftKeyboard
 
@@ -56,6 +58,8 @@ class BottomInputActivity : AppCompatActivity() {
     private var mLastDiff = 0
 
     private lateinit var measure: InputMeasurePopupWindow
+
+    private var mSystemWindow: Int = 0
 
 
     /**
@@ -106,7 +110,7 @@ class BottomInputActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_input)
 
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        mSystemWindow = window.decorView.systemUiVisibility
 
         measure = InputMeasurePopupWindow(this)
 
@@ -134,19 +138,51 @@ class BottomInputActivity : AppCompatActivity() {
             }
         }
 
-        findViewById<View>(R.id.input_hn)?.setOnClickListener {
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        }
 
-
-        findViewById<View>(R.id.input_hnl)?.setOnClickListener {
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-        }
 
         findViewById<View>(R.id.input_default)?.setOnClickListener {
-            window.decorView.systemUiVisibility = 0
+            window.decorView.systemUiVisibility = 16
         }
 
+        findViewById<SwitchMaterial>(R.id.input_hn)?.setOnCheckedChangeListener { _, isChecked ->
+
+            mSystemWindow = if (isChecked) {
+                mSystemWindow or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            } else {
+                mSystemWindow and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION.inv()
+            }
+            window.decorView.systemUiVisibility = mSystemWindow
+        }
+
+        findViewById<SwitchMaterial>(R.id.input_hnl)?.setOnCheckedChangeListener { _, isChecked ->
+
+            mSystemWindow = if (isChecked) {
+                mSystemWindow or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+            } else {
+                mSystemWindow and View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION.inv()
+            }
+            window.decorView.systemUiVisibility = mSystemWindow
+        }
+
+        findViewById<SwitchMaterial>(R.id.input_fs)?.setOnCheckedChangeListener { _, isChecked ->
+
+            mSystemWindow = if (isChecked) {
+                mSystemWindow or View.SYSTEM_UI_FLAG_FULLSCREEN
+            } else {
+                mSystemWindow and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
+            }
+            window.decorView.systemUiVisibility = mSystemWindow
+        }
+
+        findViewById<SwitchMaterial>(R.id.input_fsl)?.setOnCheckedChangeListener { _, isChecked ->
+
+            mSystemWindow = if (isChecked) {
+                mSystemWindow or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            } else {
+                mSystemWindow and View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN.inv()
+            }
+            window.decorView.systemUiVisibility = mSystemWindow
+        }
     }
 
 

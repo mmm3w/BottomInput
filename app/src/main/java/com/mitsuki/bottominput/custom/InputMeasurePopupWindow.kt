@@ -1,12 +1,10 @@
 package com.mitsuki.bottominput.custom
 
-import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.*
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.mitsuki.armory.extend.navigationBarHeight
+import com.mitsuki.armory.extend.statusBarHeight
 import com.mitsuki.bottominput.screenHeight
 import com.mitsuki.bottominput.screenWidth
 
@@ -21,9 +20,10 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
     ViewTreeObserver.OnGlobalLayoutListener, LifecycleObserver {
 
     private val currentDisplayRect by lazy { Rect() }
-    private val oldDisplayRect by lazy { Rect() }
-    private val originalRect by lazy {
-        Rect().apply { set(0, 0, context.screenWidth, context.screenHeight) }
+    private val lastDisplayRect by lazy { Rect() }
+    private val originalRect by lazy { Rect() }
+    private val mDeviationHeight by lazy {
+        activity.statusBarHeight().coerceAtMost(activity.navigationBarHeight())
     }
 //    private var maxHeight = 0
 
@@ -53,6 +53,7 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
     private val context: Context get() = contentView.context
 
     override fun onGlobalLayout() {
+        obtainOriginalRect()
         /**
          * 1.横屏模式在切入后台，再切回前台，部分手机会产生视图旋转。触发布局调整。
          * 2.底部导航栏状态变更会触发布局调整。
@@ -87,13 +88,13 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
         contentView.getWindowVisibleDisplayFrame(currentDisplayRect)
 
 
-
-        //不光是底部栏，顶栏状态变更也要考虑
-
+        //主要两个点
+        //一是可能存在物理导航栏，它并不会显示在屏幕中，但是存在高度
+        //二是状态栏、导航栏的改变(例如显示隐藏)导致的布局变化，最终g
 
 
         //过滤重复事件
-        if (currentDisplayRect.bottom == oldDisplayRect.bottom) return
+        if (currentDisplayRect.bottom == lastDisplayRect.bottom) return
 
         //屏幕旋转情况下的导航栏高度
         val isShowNavigation =
@@ -104,79 +105,47 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
         }
 
 
-
-
         //物理导航栏，有高度但是不显示
         //排除了导航栏的高度
+        //一个屏幕的真实高度排除了可能存在的导航栏的高度
         val excludeNavigation = originalRect.bottom - navigationBarHeight
-        val ddd = currentDisplayRect.bottom - excludeNavigation
+        //当前的高度差，>=0的时候说明输入法隐藏中
+        val currentHeightDiff = currentDisplayRect.bottom - excludeNavigation
+        //前后两次显示矩阵的高度差
+        val aroundHeightDiff = currentDisplayRect.bottom - lastDisplayRect.bottom
+
+        if (
+            (currentHeightDiff >= 0 && aroundHeightDiff <= mDeviationHeight) ||//两次高度变动属于状态栏或导航栏的变动
+            (currentHeightDiff >= 0 && currentDisplayRect.bottom < excludeNavigation) || //当前的高度在最低线内部
+            (currentHeightDiff < 0 && currentDisplayRect.bottom >= (originalRect.bottom - mDeviationHeight) && excludeNavigation != 0) //存在一个最低的显示高度
+        ) {
+            //这些都是状态栏或者导航栏发生变化的事件过滤
+            return
+        }
+
+        val keyboardHeight =
+            if (currentHeightDiff >= 0) originalRect.bottom - lastDisplayRect.bottom
+            else originalRect.bottom - currentDisplayRect.bottom
 
 
-
-
-
-
-
-
-        Log.e("asdf", "navigationBarHeight : $navigationBarHeight")
-        Log.e("asdf", "currentDisplayRect : $currentDisplayRect")
-
-        //虚拟导航栏的显示隐藏
-
-
-        val h = originalRect.bottom - navigationBarHeight
-        val hh = currentDisplayRect.bottom - h
-        val hhh = currentDisplayRect.bottom - oldDisplayRect.bottom
-
-        val g = originalRect.bottom - navigationBarHeight
-//        val gg = originalRect.bottom -
-//        if ((hh >= 0 && hhh))
-
-
-
-
-
-
-        //计算一个底部navigation的高度，通过navigation是否显示和屏幕的方向综合计算这个高度
-        //0和180的时候，navigation显示时就直接有这个高度，90和270直接高度0
-//
-//
-//        //StatusBar显示隐藏事件处理
-//
-//        //当前高度-屏幕高度
-//        val hhh = currentDisplayRect.bottom - originalRect.bottom + 0// 可能存在导航栏的高度
-//        val h = currentDisplayRect.bottom - originalRect.bottom
-//        //当前高度-上次高度
-//        val hh = currentDisplayRect.bottom - oldDisplayRect.bottom
-//
-//
-//
-//        Log.e("asdf", "$h")
-//
-
-//        val hhhh = if (hhh >= 0) hh else h
-//        Log.e("asdf", "$hhhh")
-
-
-//        if (h >= 0)
-
-
-//
-//        if (currentDisplayRect.bottom > maxHeight) {
-//            maxHeight = currentDisplayRect.bottom
-//        }
-////        val screenHeight: Int = DensityUtil.getScreenHeight(context)
-////        //键盘的高度
-//        val keyboardHeight = maxHeight - currentDisplayRect.bottom
-//        val visible = keyboardHeight > context.screenHeight / 4
+//        Log.e("asdf", "originalRect : $originalRect")
+//        Log.e("asdf", "currentDisplayRect : $currentDisplayRect")
+//        Log.e("asdf", "lastDisplayRect : $lastDisplayRect")
+//        Log.e("asdf", "navigationBarHeight : $navigationBarHeight")
 //        Log.e("asdf", "keyboardHeight : $keyboardHeight")
+//        Log.e("asdf", "=====================================================")
 
 
-        oldDisplayRect.set(currentDisplayRect)
+        lastDisplayRect.set(currentDisplayRect)
+    }
+
+    private fun obtainOriginalRect() {
+        originalRect.set(0, 0, activity.screenWidth, activity.screenHeight)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onLifeDestroy() {
         dismiss()
+        contentView.viewTreeObserver.removeOnGlobalLayoutListener(this)
     }
 }
