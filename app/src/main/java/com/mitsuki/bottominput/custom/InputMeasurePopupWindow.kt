@@ -22,7 +22,11 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
 
     private val currentDisplayRect by lazy { Rect() }
     private val lastDisplayRect by lazy { Rect() }
-    private val originalRect by lazy { Rect() }
+    private val screenRect by lazy { Rect(0, 0, activity.screenWidth, activity.screenHeight) }
+    private val displayRect by lazy { Rect(0, 0, activity.displayWidth, activity.displayHeight) }
+
+    private var isFirst = false
+
     private val mDeviationHeight by lazy {
         activity.statusBarHeight().coerceAtMost(activity.navigationBarHeight())
     }
@@ -39,6 +43,7 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
         contentView.viewTreeObserver.addOnGlobalLayoutListener(this)
         setContentView(contentView)
 
+        isFirst = false
 
         activity.window.decorView.post {
             showAtLocation(
@@ -55,7 +60,6 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
     private val context: Context get() = contentView.context
 
     override fun onGlobalLayout() {
-        obtainOriginalRect()
         /**
          * 1.横屏模式在切入后台，再切回前台，部分手机会产生视图旋转。触发布局调整。
          * 2.底部导航栏状态变更会触发布局调整。
@@ -71,18 +75,18 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
          *
          */
         //部分设备后台旋转事件过滤
-        val min = originalRect.bottom.coerceAtMost(originalRect.right)
-        val max = originalRect.bottom.coerceAtLeast(originalRect.right)
+        val min = displayRect.bottom.coerceAtMost(displayRect.right)
+        val max = displayRect.bottom.coerceAtLeast(displayRect.right)
         //正方形分辨率
         if (max.toDouble() / min.toDouble() >= 1.2) {
             when (activity.requestedOrientation) {
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT -> {
-                    if (originalRect.right > originalRect.bottom) return
+                    if (displayRect.right > displayRect.bottom) return
                 }
                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
                 ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE -> {
-                    if (originalRect.bottom > originalRect.right) return
+                    if (displayRect.bottom > displayRect.right) return
                 }
             }
         }
@@ -94,7 +98,8 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
 
         //横屏的时候导航栏在侧边
         val isShowNavigation =
-            (0 == (activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION));
+            (0 == (activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)) ||
+                    displayRect.height() != screenRect.height()
         val navigationBarHeight = when (activity.rotation) {
             Surface.ROTATION_0, Surface.ROTATION_180 -> if (isShowNavigation) context.navigationBarHeight() else 0
             else -> 0
@@ -103,7 +108,7 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
         // 先不管导航栏显示不显示，先减去导航栏的高度
         // 这个高度是最小限度，在输入法没有显示的时候，当前显示矩阵的bottom无论如何都不会小于这个高度
         // 这个其实是用来处理物理导航栏
-        val excludeNavigation = originalRect.bottom - navigationBarHeight
+        val excludeNavigation = screenRect.bottom - navigationBarHeight
         // 依据上个高度和当前矩阵的高度获取一个高度差，因为上面的条件的原因
         // 当 currentHeightDiff >= 0 的时候软键盘可能隐藏，否则软键盘可能处于显示状态
         // 还要综合判断是不是状态栏和导航栏改变导致的
@@ -115,28 +120,23 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
         if (
             (currentHeightDiff >= 0 && aroundHeightDiff <= mDeviationHeight) ||//两次高度变动属于状态栏或导航栏的变动
             (currentHeightDiff >= 0 && currentDisplayRect.bottom < excludeNavigation) || //当前的高度在最低线内部
-            (currentHeightDiff < 0 && currentDisplayRect.bottom >= (originalRect.bottom - mDeviationHeight) && excludeNavigation != 0) //存在一个最低的显示高度
+            (currentHeightDiff < 0 && currentDisplayRect.bottom >= (screenRect.bottom - mDeviationHeight) && excludeNavigation != 0) //存在一个最低的显示高度
         ) {
             //这些都是状态栏或者导航栏发生变化的事件过滤
             return
         }
 
-        var keyboardHeight =
-            if (currentHeightDiff == 0) originalRect.bottom - lastDisplayRect.bottom
-            else originalRect.bottom - currentDisplayRect.bottom
+        val keyboardHeight =
+            if (currentHeightDiff == 0) screenRect.bottom - lastDisplayRect.bottom - navigationBarHeight
+            else screenRect.bottom - currentDisplayRect.bottom - navigationBarHeight
 
-        //虚拟导航键处理
-        if (activity.screenHeight != activity.displayHeight) {
-            keyboardHeight -= navigationBarHeight
+        if (currentHeightDiff >= 0 && isFirst) {
+            isFirst = true
+        } else {
+            onKeyBoardEvent?.invoke(currentHeightDiff < 0, keyboardHeight)
         }
 
-        onKeyBoardEvent?.invoke(currentHeightDiff < 0, keyboardHeight)
-
         lastDisplayRect.set(currentDisplayRect)
-    }
-
-    private fun obtainOriginalRect() {
-        originalRect.set(0, 0, activity.screenWidth, activity.screenHeight)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)

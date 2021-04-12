@@ -1,5 +1,6 @@
 package com.mitsuki.bottominput.custom
 
+import android.animation.Animator
 import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.os.Bundle
@@ -57,18 +58,14 @@ class BottomInputActivity : AppCompatActivity() {
     private var mEmojiView: View? = null
     private var mInputView: EditText? = null
 
+    private var extendContainer: View? = null
+
     private var mLastDiff = 0
 
     private lateinit var measure: InputMeasurePopupWindow
 
     private var mSystemWindow: Int = 0
 
-
-    /**
-     * Extended menu
-     *
-     *
-     */
     private var mMenu: Menu? = null
         set(value) {
             if (value != field) {
@@ -112,26 +109,24 @@ class BottomInputActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_input)
 
-//        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-//                View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
 
         mSystemWindow = window.decorView.systemUiVisibility
 
+        extendContainer = findViewById<View>(R.id.input_extend_container)?.apply{
+        }
+
         measure = InputMeasurePopupWindow(this).apply {
             onKeyBoardEvent = { isShow: Boolean, keyboardHeight: Int ->
-                Log.e("asdf", "Keyboard $isShow $keyboardHeight")
-
-                findViewById<View>(R.id.input_extend_container)?.apply {
-                    layoutParams = layoutParams.apply {
-                        height = if (isShow) keyboardHeight else 0
-                    }
-                }
+//                Log.e("asdf", "Keyboard $isShow $keyboardHeight")
+                extendAnimator(if (isShow) keyboardHeight else 0)
             }
         }
 
         mInputView = findViewById<EditText>(R.id.input_edit)?.apply {
-
+//            post { extendAnimator(800) }
         }
+
+
 
 //        mEmojiView = findViewById<View>(R.id.input_emoji)?.apply {
 //            setOnClickListener {
@@ -147,50 +142,62 @@ class BottomInputActivity : AppCompatActivity() {
             }
         }
 
+    }
 
+    private fun extendAnimator(targetHeight: Int) {
+        extendContainer?.apply {
 
-        findViewById<View>(R.id.input_default)?.setOnClickListener {
-            window.decorView.systemUiVisibility = 16
-        }
+            val animator = animate()
 
-        findViewById<SwitchMaterial>(R.id.input_hn)?.setOnCheckedChangeListener { _, isChecked ->
+            when {
+                targetHeight > height -> {
+                    animator
+                        .translationY(0f)
+                        .setDuration(3000)
+                        .setListener(object : Animator.AnimatorListener {
+                            override fun onAnimationStart(animation: Animator?) {
+                                translationY = (targetHeight - height).toFloat()
+                                layoutParams = layoutParams.apply { height = targetHeight }
+                            }
 
-            mSystemWindow = if (isChecked) {
-                mSystemWindow or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            } else {
-                mSystemWindow and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION.inv()
+                            override fun onAnimationEnd(animation: Animator?) {
+                                translationY = 0f
+                                animator.setListener(null)
+                            }
+
+                            override fun onAnimationCancel(animation: Animator?) {
+                                animator.setListener(null)
+                            }
+
+                            override fun onAnimationRepeat(animation: Animator?) {
+                            }
+                        })
+                        .start()
+                }
+                targetHeight < height -> {
+                    animator
+                        .translationY((height - targetHeight).toFloat())
+                        .setDuration(3000)
+                        .setListener(object : Animator.AnimatorListener {
+                            override fun onAnimationStart(animation: Animator?) {
+                            }
+
+                            override fun onAnimationEnd(animation: Animator?) {
+                                layoutParams = layoutParams.apply { height = targetHeight }
+                                translationY = 0f
+                                animator.setListener(null)
+                            }
+
+                            override fun onAnimationCancel(animation: Animator?) {
+                                animator.setListener(null)
+                            }
+
+                            override fun onAnimationRepeat(animation: Animator?) {
+                            }
+                        })
+                        .start()
+                }
             }
-            window.decorView.systemUiVisibility = mSystemWindow
-        }
-
-        findViewById<SwitchMaterial>(R.id.input_hnl)?.setOnCheckedChangeListener { _, isChecked ->
-
-            mSystemWindow = if (isChecked) {
-                mSystemWindow or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-            } else {
-                mSystemWindow and View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION.inv()
-            }
-            window.decorView.systemUiVisibility = mSystemWindow
-        }
-
-        findViewById<SwitchMaterial>(R.id.input_fs)?.setOnCheckedChangeListener { _, isChecked ->
-
-            mSystemWindow = if (isChecked) {
-                mSystemWindow or View.SYSTEM_UI_FLAG_FULLSCREEN
-            } else {
-                mSystemWindow and View.SYSTEM_UI_FLAG_FULLSCREEN.inv()
-            }
-            window.decorView.systemUiVisibility = mSystemWindow
-        }
-
-        findViewById<SwitchMaterial>(R.id.input_fsl)?.setOnCheckedChangeListener { _, isChecked ->
-
-            mSystemWindow = if (isChecked) {
-                mSystemWindow or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            } else {
-                mSystemWindow and View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN.inv()
-            }
-            window.decorView.systemUiVisibility = mSystemWindow
         }
     }
 

@@ -4,45 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="48dp">
-
-        <Button
-            android:id="@+id/input_default"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="default" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/input_hn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="hide nave" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/input_hnl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="hide nave layout" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/input_fs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="full s" />
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/input_fsl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="full s layout" />
-
-    </LinearLayout>
+        android:layout_weight="1" />
 
     <LinearLayout
         android:id="@+id/input_layout"
@@ -79,6 +44,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/input_extend_container"
+        android:background="#2222ff00"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
