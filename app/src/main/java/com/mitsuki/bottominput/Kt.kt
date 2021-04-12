@@ -36,6 +36,11 @@ fun RecyclerView.addOnScrollListenerBy(
     })
 }
 
+val Activity.rotation: Int
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) display!!.rotation
+    else windowManager.defaultDisplay.rotation
+
+
 @Suppress("DEPRECATION")
 val Activity.screenWidth: Int
     get() =
@@ -51,5 +56,23 @@ val Activity.screenHeight: Int
             DisplayMetrics().apply { display?.getRealMetrics(this) }.heightPixels
         else
             DisplayMetrics().apply { windowManager.defaultDisplay.getRealMetrics(this) }.heightPixels
+
+@Suppress("DEPRECATION")
+val Activity.displayWidth: Int
+    get() =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            windowManager.currentWindowMetrics.bounds.width()
+        else
+            DisplayMetrics().apply { windowManager.defaultDisplay.getMetrics(this) }.widthPixels
+
+@Suppress("DEPRECATION")
+val Activity.displayHeight: Int
+    get() =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+            windowManager.currentWindowMetrics.bounds.height()
+        else
+            DisplayMetrics().apply { windowManager.defaultDisplay.getMetrics(this) }.heightPixels
+
+
 
 

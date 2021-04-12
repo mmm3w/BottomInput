@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.*
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +14,8 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.mitsuki.armory.extend.navigationBarHeight
 import com.mitsuki.armory.extend.statusBarHeight
-import com.mitsuki.bottominput.screenHeight
-import com.mitsuki.bottominput.screenWidth
+import com.mitsuki.bottominput.*
+import java.util.function.BinaryOperator
 
 class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWindow(),
     ViewTreeObserver.OnGlobalLayoutListener, LifecycleObserver {
@@ -25,7 +26,8 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
     private val mDeviationHeight by lazy {
         activity.statusBarHeight().coerceAtMost(activity.navigationBarHeight())
     }
-//    private var maxHeight = 0
+
+    var onKeyBoardEvent: ((Boolean, Int) -> Unit)? = null
 
     init {
         val contentView = View(activity)
@@ -87,29 +89,25 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
 
         contentView.getWindowVisibleDisplayFrame(currentDisplayRect)
 
-
-        //主要两个点
-        //一是可能存在物理导航栏，它并不会显示在屏幕中，但是存在高度
-        //二是状态栏、导航栏的改变(例如显示隐藏)导致的布局变化，最终g
-
-
         //过滤重复事件
         if (currentDisplayRect.bottom == lastDisplayRect.bottom) return
 
-        //屏幕旋转情况下的导航栏高度
+        //横屏的时候导航栏在侧边
         val isShowNavigation =
-            (0 == (contentView.systemUiVisibility and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION));
-        val navigationBarHeight = when (activity.windowManager.defaultDisplay.rotation) {
+            (0 == (activity.window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION));
+        val navigationBarHeight = when (activity.rotation) {
             Surface.ROTATION_0, Surface.ROTATION_180 -> if (isShowNavigation) context.navigationBarHeight() else 0
             else -> 0
         }
 
-
-        //物理导航栏，有高度但是不显示
-        //排除了导航栏的高度
-        //一个屏幕的真实高度排除了可能存在的导航栏的高度
+        // 先不管导航栏显示不显示，先减去导航栏的高度
+        // 这个高度是最小限度，在输入法没有显示的时候，当前显示矩阵的bottom无论如何都不会小于这个高度
+        // 这个其实是用来处理物理导航栏
         val excludeNavigation = originalRect.bottom - navigationBarHeight
-        //当前的高度差，>=0的时候说明输入法隐藏中
+        // 依据上个高度和当前矩阵的高度获取一个高度差，因为上面的条件的原因
+        // 当 currentHeightDiff >= 0 的时候软键盘可能隐藏，否则软键盘可能处于显示状态
+        // 还要综合判断是不是状态栏和导航栏改变导致的
+        // 如果存在虚拟导航栏的时候，不显示输入法是一般都是为0，但是是物理导航栏的话，存在导航栏高度，那么这个值会大于0
         val currentHeightDiff = currentDisplayRect.bottom - excludeNavigation
         //前后两次显示矩阵的高度差
         val aroundHeightDiff = currentDisplayRect.bottom - lastDisplayRect.bottom
@@ -123,18 +121,16 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
             return
         }
 
-        val keyboardHeight =
-            if (currentHeightDiff >= 0) originalRect.bottom - lastDisplayRect.bottom
+        var keyboardHeight =
+            if (currentHeightDiff == 0) originalRect.bottom - lastDisplayRect.bottom
             else originalRect.bottom - currentDisplayRect.bottom
 
+        //虚拟导航键处理
+        if (activity.screenHeight != activity.displayHeight) {
+            keyboardHeight -= navigationBarHeight
+        }
 
-//        Log.e("asdf", "originalRect : $originalRect")
-//        Log.e("asdf", "currentDisplayRect : $currentDisplayRect")
-//        Log.e("asdf", "lastDisplayRect : $lastDisplayRect")
-//        Log.e("asdf", "navigationBarHeight : $navigationBarHeight")
-//        Log.e("asdf", "keyboardHeight : $keyboardHeight")
-//        Log.e("asdf", "=====================================================")
-
+        onKeyBoardEvent?.invoke(currentHeightDiff < 0, keyboardHeight)
 
         lastDisplayRect.set(currentDisplayRect)
     }

@@ -1,5 +1,6 @@
 package com.mitsuki.bottominput.custom
 
+import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.commit
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.mitsuki.bottominput.R
@@ -110,13 +112,20 @@ class BottomInputActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_input)
 
+//        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+//                View.SYSTEM_UI_FLAG_FULLSCREEN or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+
         mSystemWindow = window.decorView.systemUiVisibility
 
-        measure = InputMeasurePopupWindow(this)
+        measure = InputMeasurePopupWindow(this).apply {
+            onKeyBoardEvent = { isShow: Boolean, keyboardHeight: Int ->
+                Log.e("asdf", "Keyboard $isShow $keyboardHeight")
 
-        findViewById<View>(R.id.input_extend_container)?.apply {
-            layoutParams = layoutParams.apply {
-                height = 526
+                findViewById<View>(R.id.input_extend_container)?.apply {
+                    layoutParams = layoutParams.apply {
+                        height = if (isShow) keyboardHeight else 0
+                    }
+                }
             }
         }
 
