@@ -13,8 +13,8 @@ import com.mitsuki.bottominput.R
 import com.mitsuki.bottominput.addOnScrollListenerBy
 import com.mitsuki.bottominput.custom.helper.FragmentHelper
 import com.mitsuki.bottominput.custom.helper.InputMeasurePopupWindow
+import com.mitsuki.bottominput.custom.helper.RecyclerViewTransHelper
 import com.mitsuki.bottominput.custom.helper.TransAnimate
-import com.mitsuki.bottominput.doublelist.InputAdapter
 import com.mitsuki.bottominput.hideSoftKeyboard
 
 class BottomInputActivity : AppCompatActivity() {
@@ -40,6 +40,7 @@ class BottomInputActivity : AppCompatActivity() {
 
     private val transHelper by lazy { TransAnimate(MyReferValue(this)) }
     private lateinit var measure: InputMeasurePopupWindow
+    private lateinit var mRecyclerViewTranslationY: RecyclerViewTransHelper
 
     private var mKeyboardHeight = 0
 
@@ -58,7 +59,12 @@ class BottomInputActivity : AppCompatActivity() {
                                 fragmentHelper.obtainFragment(0),
                                 null
                             )
-                            transHelper.transHeight(if (mKeyboardHeight == 0) 500 else mKeyboardHeight)
+                            val targetHeight = if (mKeyboardHeight == 0) 500 else mKeyboardHeight
+
+                            transHelper.transHeight(
+                                targetHeight,
+                                mRecyclerViewTranslationY.transAnimator(targetHeight)
+                            )
                         }
                     }
                     Menu.Emoji -> {
@@ -71,15 +77,25 @@ class BottomInputActivity : AppCompatActivity() {
                                 fragmentHelper.obtainFragment(1),
                                 null
                             )
-                            transHelper.transHeight(1000)
+
+                            transHelper.transHeight(
+                                1000,
+                                mRecyclerViewTranslationY.transAnimator(1000)
+                            )
                         }
                     }
                     Menu.KeyBoard -> {
-                        transHelper.transHeight(if (mKeyboardHeight == 0) 500 else mKeyboardHeight)
+                        val targetHeight = if (mKeyboardHeight == 0) 500 else mKeyboardHeight
+
+                        transHelper.transHeight(
+                            targetHeight,
+                            mRecyclerViewTranslationY.transAnimator(targetHeight)
+                        )
+
                     }
                     null -> {
                         //隐藏菜单
-                        transHelper.transHeight(0)
+                        transHelper.transHeight(0, mRecyclerViewTranslationY.transAnimator(0))
                         mInputView?.hideSoftKeyboard()
                     }
                     else -> {
@@ -105,6 +121,7 @@ class BottomInputActivity : AppCompatActivity() {
 
                 }
             })
+            mRecyclerViewTranslationY = RecyclerViewTransHelper(this)
         }
 
         mInputView = findViewById<EditText>(R.id.input_edit)?.apply {
