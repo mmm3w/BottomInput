@@ -1,11 +1,10 @@
-package com.mitsuki.bottominput.custom
+package com.mitsuki.bottominput.custom.helper
 
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.*
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +14,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.mitsuki.armory.extend.navigationBarHeight
 import com.mitsuki.armory.extend.statusBarHeight
 import com.mitsuki.bottominput.*
-import java.util.function.BinaryOperator
 
 class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWindow(),
     ViewTreeObserver.OnGlobalLayoutListener, LifecycleObserver {
@@ -32,6 +30,9 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
     }
 
     var onKeyBoardEvent: ((Boolean, Int) -> Unit)? = null
+
+    var keyboardHeight: Int = 0
+        private set
 
     init {
         val contentView = View(activity)
@@ -126,7 +127,7 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
             return
         }
 
-        val keyboardHeight =
+        keyboardHeight =
             if (currentHeightDiff == 0) screenRect.bottom - lastDisplayRect.bottom - navigationBarHeight
             else screenRect.bottom - currentDisplayRect.bottom - navigationBarHeight
 

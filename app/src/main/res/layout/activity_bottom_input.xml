@@ -1,51 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:layout_marginBottom="48dp" />
 
     <LinearLayout
-        android:id="@+id/input_layout"
+        android:id="@+id/input_bottom"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="#ebebeb"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="8dp">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/input_edit"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/shape_input_2"
-            android:imeOptions="actionSend"
-            android:inputType="text"
-            android:paddingHorizontal="10dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="bottom"
+            android:background="#ebebeb"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp">
 
-        <ImageView
-            android:id="@+id/input_emoji"
-            android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/input_edit"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/shape_input_2"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:paddingHorizontal="10dp" />
+
+            <ImageView
+                android:id="@+id/input_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_baseline_emoji_emotions_24" />
+
+            <ImageView
+                android:id="@+id/input_extend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/ic_round_add_circle_outline_24" />
+        </LinearLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/input_extend_container"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:src="@drawable/ic_baseline_emoji_emotions_24" />
+            android:background="#2222ff00" />
 
-        <ImageView
-            android:id="@+id/input_extend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:src="@drawable/ic_round_add_circle_outline_24" />
     </LinearLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/input_extend_container"
-        android:background="#2222ff00"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-</LinearLayout>
+</FrameLayout>
