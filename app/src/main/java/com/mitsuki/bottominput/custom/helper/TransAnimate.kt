@@ -9,7 +9,7 @@ class TransAnimate(private val referValue: ReferValue) {
     private var lastAnimatorSet: AnimatorSet? = null
 
     companion object {
-        private const val DURATION = 200L
+        private const val DURATION = 100L
     }
 
     fun transHeight(targetHeight: Int, companionAnimator: Animator? = null) {

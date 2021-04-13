@@ -112,6 +112,7 @@ class BottomInputActivity : AppCompatActivity() {
         title = "Custom"
 
 
+
         mMessageView = findViewById<RecyclerView>(R.id.message_pool)?.apply {
             layoutManager = LinearLayoutManager(this@BottomInputActivity)
             adapter = mMainAdapter
@@ -121,7 +122,8 @@ class BottomInputActivity : AppCompatActivity() {
 
                 }
             })
-            mRecyclerViewTranslationY = RecyclerViewTransHelper(this)
+
+            mRecyclerViewTranslationY = RecyclerViewTransHelper(this@BottomInputActivity, this)
         }
 
         mInputView = findViewById<EditText>(R.id.input_edit)?.apply {
