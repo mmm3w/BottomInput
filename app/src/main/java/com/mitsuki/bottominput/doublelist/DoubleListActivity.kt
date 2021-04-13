@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mitsuki.bottominput.MessageAdapter
 import com.mitsuki.bottominput.R
 import com.mitsuki.bottominput.addOnScrollListenerBy
 

@@ -2,13 +2,19 @@ package com.mitsuki.bottominput.custom
 
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.mitsuki.bottominput.MessageAdapter
 import com.mitsuki.bottominput.R
+import com.mitsuki.bottominput.addOnScrollListenerBy
 import com.mitsuki.bottominput.custom.helper.FragmentHelper
 import com.mitsuki.bottominput.custom.helper.InputMeasurePopupWindow
 import com.mitsuki.bottominput.custom.helper.TransAnimate
+import com.mitsuki.bottominput.doublelist.InputAdapter
 import com.mitsuki.bottominput.hideSoftKeyboard
 
 class BottomInputActivity : AppCompatActivity() {
@@ -16,6 +22,13 @@ class BottomInputActivity : AppCompatActivity() {
     private var mExtendView: View? = null
     private var mEmojiView: View? = null
     private var mInputView: EditText? = null
+
+    private val mMessagePool by lazy { arrayListOf<String>() }
+
+    private val mMainAdapter by lazy { MessageAdapter(mMessagePool) }
+
+    private var mMessageView: RecyclerView? = null
+
 
     private val fragmentHelper = FragmentHelper(2) {
         when (it) {
@@ -67,6 +80,7 @@ class BottomInputActivity : AppCompatActivity() {
                     null -> {
                         //隐藏菜单
                         transHelper.transHeight(0)
+                        mInputView?.hideSoftKeyboard()
                     }
                     else -> {
 
@@ -79,7 +93,41 @@ class BottomInputActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bottom_input)
 
-        mInputView = findViewById<EditText>(R.id.input_edit)
+        title = "Custom"
+
+
+        mMessageView = findViewById<RecyclerView>(R.id.message_pool)?.apply {
+            layoutManager = LinearLayoutManager(this@BottomInputActivity)
+            adapter = mMainAdapter
+            addOnScrollListenerBy(onScrollStateChanged = { _: RecyclerView, newState: Int ->
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                    mMenu = null
+
+                }
+            })
+        }
+
+        mInputView = findViewById<EditText>(R.id.input_edit)?.apply {
+            setOnEditorActionListener { v, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    mMessagePool.add(v.text.toString())
+                    mMainAdapter.notifyItemInserted(mMessagePool.lastIndex)
+                    mMessageView?.smoothScrollToPosition(mMessagePool.lastIndex)
+                    v.text = ""
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+
+        mEmojiView = findViewById<View>(R.id.input_emoji)?.apply {
+            setOnClickListener { mMenu = Menu.Emoji }
+        }
+
+        mExtendView = findViewById<View>(R.id.input_extend)?.apply {
+            setOnClickListener { mMenu = Menu.Normal }
+        }
 
         measure = InputMeasurePopupWindow(this).apply {
             onKeyBoardEvent = { isShow: Boolean, keyboardHeight: Int ->
@@ -96,14 +144,6 @@ class BottomInputActivity : AppCompatActivity() {
                     if (mMenu == Menu.KeyBoard) mMenu = null
                 }
             }
-        }
-
-        mEmojiView = findViewById<View>(R.id.input_emoji)?.apply {
-            setOnClickListener { mMenu = Menu.Emoji }
-        }
-
-        mExtendView = findViewById<View>(R.id.input_extend)?.apply {
-            setOnClickListener { mMenu = Menu.Normal }
         }
 
     }
