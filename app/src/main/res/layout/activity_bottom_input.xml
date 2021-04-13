@@ -54,8 +54,7 @@
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/input_extend_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#2222ff00" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

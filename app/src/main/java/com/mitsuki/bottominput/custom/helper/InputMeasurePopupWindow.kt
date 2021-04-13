@@ -131,7 +131,7 @@ class InputMeasurePopupWindow(private val activity: AppCompatActivity) : PopupWi
             if (currentHeightDiff == 0) screenRect.bottom - lastDisplayRect.bottom - navigationBarHeight
             else screenRect.bottom - currentDisplayRect.bottom - navigationBarHeight
 
-        if (currentHeightDiff >= 0 && isFirst) {
+        if (currentHeightDiff >= 0 && !isFirst) {
             isFirst = true
         } else {
             onKeyBoardEvent?.invoke(currentHeightDiff < 0, keyboardHeight)
